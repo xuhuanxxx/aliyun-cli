@@ -161,7 +161,7 @@ func newCommandContext(stdout io.Writer, stderr io.Writer) *cli.Context {
 func newRootCommand(profile config.Profile, stdout io.Writer) *cli.Command {
 	// create root command
 	rootCmd := &cli.Command{
-		Name:              "aliyun",
+		Name:              cli.CommandName,
 		Short:             i18n.T("Alibaba Cloud Command Line Interface Version "+cli.Version, "阿里云CLI命令行工具 "+cli.Version),
 		Usage:             "aliyun <product> <operation> [--parameter1 value1 --parameter2 value2 ...]",
 		Sample:            "aliyun ecs DescribeRegions",
@@ -239,7 +239,13 @@ func newRootCommand(profile config.Profile, stdout io.Writer) *cli.Command {
 	// plugin command
 	rootCmd.AddSubCommand(plugin.NewPluginCommand())
 	// upgrade command
-	rootCmd.AddSubCommand(upgrade.NewUpgradeCommand())
+	if cli.CommandName == "aliyun" {
+		rootCmd.AddSubCommand(upgrade.NewUpgradeCommand())
+	} else {
+		rootCmd.AddSubCommand(&cli.Command{Name: "upgrade", Short: i18n.T("Upgrade with Homebrew", "使用 Homebrew 升级"), Run: func(ctx *cli.Context, args []string) error {
+			return fmt.Errorf("use brew upgrade aliyunx; official self-upgrade is disabled for this distribution")
+		}})
+	}
 	// mock command
 	rootCmd.AddSubCommand(mock.NewMockCommand(config.GetConfigPath))
 	commando.SetRootHelpSpecs(rootCommandHelpSpecs, rootFlagHelpSpecs)
@@ -248,6 +254,7 @@ func newRootCommand(profile config.Profile, stdout io.Writer) *cli.Command {
 
 	plugin.RegisterReservedTopLevelCommands(rootCmd.SubCommandNames())
 
+	cli.BrandCommandHelp(rootCmd)
 	return rootCmd
 }
 

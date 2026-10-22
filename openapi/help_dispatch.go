@@ -458,7 +458,7 @@ func (c *Commando) resolveParsedHelpTarget(ctx *cli.Context, args []string) (Hel
 	if opts.SectionExplicit && target.Level != HelpLevelAction {
 		return HelpTarget{}, false, &InvalidOptionCombinationError{
 			Options: []string{"--" + CliHelpSectionFlagName},
-			Err:     fmt.Errorf("--%s is only valid with an API target: `aliyun help <product> <API>` or `aliyun <product> <API> --help`", CliHelpSectionFlagName),
+			Err:     fmt.Errorf(cli.CommandText("--%s is only valid with an API target: `aliyun help <product> <API>` or `aliyun <product> <API> --help`"), CliHelpSectionFlagName),
 		}
 	}
 	if opts.SectionExplicit {
@@ -655,7 +655,7 @@ func adaptMachineHelpTargetError(target HelpTarget, structured *machineHelpError
 			Product:    target.Product,
 			Command:    target.Action,
 			Candidates: runtimehost.ProductCommands(target.Product),
-			Err:        fmt.Errorf("%q is not a valid api. See `aliyun %s --help`.", target.Action, strings.ToLower(target.Product)),
+			Err:        fmt.Errorf(cli.CommandText("%q is not a valid api. See `aliyun %s --help`."), target.Action, strings.ToLower(target.Product)),
 		}
 	default:
 		return structured
@@ -719,17 +719,17 @@ func (c *Commando) buildRootHelpDocument(root *cli.Command) (*machineHelpRootDoc
 	document := &machineHelpRootDocument{
 		SchemaVersion: machineHelpSchemaVersion,
 		Kind:          "root",
-		Target:        machineHelpTarget{Path: []string{"aliyun"}, RequestedStyle: "root"},
+		Target:        machineHelpTarget{Path: []string{cli.CommandName}, RequestedStyle: "root"},
 		Name:          input.Name,
 		Version:       input.Version,
 		Description:   machineHelpLocalizedText{EN: input.Description.EN, ZH: input.Description.ZH},
 		QuickStart: []string{
-			"aliyun configure",
-			"aliyun ecs DescribeRegions",
+			cli.CommandText("aliyun configure"),
+			cli.CommandText("aliyun ecs DescribeRegions"),
 		},
 	}
 	for _, command := range input.Commands {
-		path := append([]string{"aliyun"}, command.Path...)
+		path := append([]string{cli.CommandName}, command.Path...)
 		document.Commands = append(document.Commands, machineHelpCommandSummary{
 			Group:       string(command.Group),
 			Path:        path,

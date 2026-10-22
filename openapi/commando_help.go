@@ -50,10 +50,10 @@ func productHelpEnvEnabled(name string) bool {
 func (c *Commando) invalidBaselineCommandError(productCode, command string) error {
 	_, hasLegacyHelp := c.library.GetProduct(productCode)
 	if hasLegacyHelp {
-		return fmt.Errorf("'%s' is not a valid kebab-case command for product '%s'.\nRun 'aliyun %s --help' to view traditional PascalCase commands, or '%s=true aliyun %s --help' to view kebab-case commands.",
+		return fmt.Errorf(cli.CommandText("'%s' is not a valid kebab-case command for product '%s'.\nRun 'aliyun %s --help' to view traditional PascalCase commands, or '%s=true aliyun %s --help' to view kebab-case commands."),
 			command, productCode, productCode, baselineProductHelpEnv, productCode)
 	}
-	return fmt.Errorf("'%s' is not a valid kebab-case command for product '%s'.\nRun 'aliyun %s --help' to view available kebab-case commands.",
+	return fmt.Errorf(cli.CommandText("'%s' is not a valid kebab-case command for product '%s'.\nRun 'aliyun %s --help' to view available kebab-case commands."),
 		command, productCode, productCode)
 }
 
@@ -112,8 +112,8 @@ func (c *Commando) printAiModeHelpHint(ctx *cli.Context) {
 		return
 	}
 	msg := i18n.T(
-		"Note: CLI AI mode is enabled in configuration; API requests include the AI User-Agent segment. If you do not want this, run `aliyun configure ai-mode disable`.",
-		"提示：已在配置中开启 CLI AI 模式，API 请求会带上 AI UA。若不需要，请执行 `aliyun configure ai-mode disable` 关闭。",
+		cli.CommandText("Note: CLI AI mode is enabled in configuration; API requests include the AI User-Agent segment. If you do not want this, run `aliyun configure ai-mode disable`."),
+		cli.CommandText("提示：已在配置中开启 CLI AI 模式，API 请求会带上 AI UA。若不需要，请执行 `aliyun configure ai-mode disable` 关闭。"),
 	).Text()
 	cli.PrintfWithColor(ctx.Stderr(), cli.Yellow, "%s\n", msg)
 }
@@ -292,7 +292,7 @@ func (c *Commando) printProducts(ctx *cli.Context) {
 	// 5. Print installation hint for uninstalled plugins
 	if len(uninstalledPlugins) > 0 {
 		cli.PrintfWithColor(ctx.Stdout(), cli.ColorOff, "\nTo install plugins for uninstalled products, run:\n")
-		cli.PrintfWithColor(ctx.Stdout(), cli.Green, "  aliyun plugin install --names <plugin_name> [--enable-pre]\n")
+		cli.PrintfWithColor(ctx.Stdout(), cli.Green, "%s", cli.CommandText("  aliyun plugin install --names <plugin_name> [--enable-pre]\n"))
 	}
 	c.printHelpContextHints(ctx)
 }
@@ -377,7 +377,7 @@ func (c *Commando) printProductUsageForMode(ctx *cli.Context, productCode string
 
 	if !hasLegacyHelp {
 		if pluginName != "" {
-			return fmt.Errorf("'%s' is not a valid product.\nDid you mean to install corresponding product plugin?\n  aliyun plugin install --names %s", productCode, pluginName)
+			return fmt.Errorf(cli.CommandText("'%s' is not a valid product.\nDid you mean to install corresponding product plugin?\n  aliyun plugin install --names %s"), productCode, pluginName)
 		}
 		var plugList []plugin.PluginInfo
 		if c.pluginIndex != nil {
@@ -387,10 +387,10 @@ func (c *Commando) printProductUsageForMode(ctx *cli.Context, productCode string
 	}
 
 	if product.ApiStyle == "rpc" {
-		cli.Printf(ctx.Stdout(), "\nUsage:\n  aliyun %s <ApiName> --parameter1 value1 --parameter2 value2 ...\n", strings.ToLower(product.Code))
+		cli.Printf(ctx.Stdout(), cli.CommandText("\nUsage:\n  aliyun %s <ApiName> --parameter1 value1 --parameter2 value2 ...\n"), strings.ToLower(product.Code))
 	} else {
-		cli.Printf(ctx.Stdout(), "\nUsage 1:\n  aliyun %s [GET|PUT|POST|DELETE|PATCH] <PathPattern> --body \"...\" \n", strings.ToLower(product.Code))
-		cli.Printf(ctx.Stdout(), "\nUsage 2 (For API with NO PARAMS in PathPattern only.):\n  aliyun %s <ApiName> --parameter1 value1 --parameter2 value2 ... --body \"...\"\n", strings.ToLower(product.Code))
+		cli.Printf(ctx.Stdout(), cli.CommandText("\nUsage 1:\n  aliyun %s [GET|PUT|POST|DELETE|PATCH] <PathPattern> --body \"...\" \n"), strings.ToLower(product.Code))
+		cli.Printf(ctx.Stdout(), cli.CommandText("\nUsage 2 (For API with NO PARAMS in PathPattern only.):\n  aliyun %s <ApiName> --parameter1 value1 --parameter2 value2 ... --body \"...\"\n"), strings.ToLower(product.Code))
 	}
 	productName := getProductDisplayName(product)
 	cli.Printf(ctx.Stdout(), "\nProduct: %s (%s)\n", product.Code, productName)
@@ -455,7 +455,7 @@ func (c *Commando) printProductUsageForMode(ctx *cli.Context, productCode string
 		}
 	}
 
-	cli.Printf(ctx.Stdout(), "\nRun `aliyun %s <ApiName> --help` to get more information about this API\n", product.GetLowerCode())
+	cli.Printf(ctx.Stdout(), cli.CommandText("\nRun `aliyun %s <ApiName> --help` to get more information about this API\n"), product.GetLowerCode())
 	switch {
 	case aiMode:
 	case isInstalled && showOriginal:
@@ -524,7 +524,7 @@ func (c *Commando) printApiUsage(ctx *cli.Context, productCode string, apiName s
 				plugin.ExecutePlugin(productCode, getPluginArgsForHelp(productCode), ctx)
 				return nil
 			} else {
-				return fmt.Errorf("'%s' is not a valid product.\nDid you mean to install corresponding product plugin?\n  aliyun plugin install --names %s", productCode, pluginName)
+				return fmt.Errorf(cli.CommandText("'%s' is not a valid product.\nDid you mean to install corresponding product plugin?\n  aliyun plugin install --names %s"), productCode, pluginName)
 			}
 		}
 		// Not a built-in product and not a plugin product, like fuzzy cmd input
@@ -554,7 +554,7 @@ func (c *Commando) printApiUsage(ctx *cli.Context, productCode string, apiName s
 					plugin.ExecutePlugin(productCode, getPluginArgsForHelp(productCode), ctx)
 					return nil
 				} else {
-					return fmt.Errorf("'%s' is not a valid built-in command.\nA plugin '%s' is available which might support this command.\nRun 'aliyun plugin install --names %s' to install it.", apiName, pluginName, pluginName)
+					return fmt.Errorf(cli.CommandText("'%s' is not a valid built-in command.\nA plugin '%s' is available which might support this command.\nRun 'aliyun plugin install --names %s' to install it."), apiName, pluginName, pluginName)
 				}
 			} else { // 非插件命令形式，如果本地插件安装了，则返回插件帮助; 如果未安装，则继续原有api纠错系统
 				if isInstalled {
@@ -670,7 +670,7 @@ func (c *Commando) tryDelegatePluginHelp(ctx *cli.Context, args []string) (bool,
 		c.printPluginIndexLoadFailureNote(ctx)
 	}
 
-	userCmd := "aliyun " + strings.Join(args, " ")
+	userCmd := cli.CommandText("aliyun ") + strings.Join(args, " ")
 
 	// Step 2: known plugin → branch on local install state.
 	if indexHit != nil {
@@ -680,7 +680,7 @@ func (c *Commando) tryDelegatePluginHelp(ctx *cli.Context, args []string) (bool,
 			// (re-running install will repair a corrupted manifest).
 			return true, fmt.Errorf(
 				"'%s' looks like a plugin command but plugin '%s' is not installed.\n"+
-					"Run 'aliyun plugin install --name %s' to install it and try again.",
+					cli.CommandText("Run 'aliyun plugin install --name %s' to install it and try again."),
 				userCmd, productCode, indexHit.Name,
 			)
 		}
@@ -694,7 +694,7 @@ func (c *Commando) tryDelegatePluginHelp(ctx *cli.Context, args []string) (bool,
 		// Don't fall through to the legacy error — surface reinstall guidance so the user gets a one-line fix.
 		return true, fmt.Errorf(
 			"'%s' looks like a plugin command and plugin '%s' is registered as installed but its binary cannot be located.\n"+
-				"Run 'aliyun plugin install --name %s' to reinstall it and try again.",
+				cli.CommandText("Run 'aliyun plugin install --name %s' to reinstall it and try again."),
 			userCmd, productCode, indexHit.Name,
 		)
 	}
@@ -726,6 +726,6 @@ func (c *Commando) tryDelegatePluginHelp(ctx *cli.Context, args []string) (bool,
 		library: c.library,
 		plugins: plugList,
 		Hint: "If you meant an OpenAPI built-in call, the form is " +
-			"'aliyun <product> <APIName>' (API names are PascalCase, e.g. 'DescribeRegions').",
+			cli.CommandText("'aliyun <product> <APIName>' (API names are PascalCase, e.g. 'DescribeRegions')."),
 	}
 }

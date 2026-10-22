@@ -65,7 +65,7 @@ type InvalidProductError struct {
 }
 
 func (e *InvalidProductError) Error() string {
-	return fmt.Sprintf("%q is not a valid command or product. See `aliyun help`.", strings.ToLower(e.Code))
+	return fmt.Sprintf(cli.CommandText("%q is not a valid command or product. See `aliyun help`."), strings.ToLower(e.Code))
 }
 
 func (e *InvalidProductError) AgentMessage() string {
@@ -100,7 +100,7 @@ func (e *InvalidApiError) Error() string {
 	if command := apiRecoveryCommand(e.Name, product, e.product.ApiNames); command != "" {
 		return fmt.Sprintf("%q is not a valid api. Search matching APIs with `%s`.", e.Name, command)
 	}
-	return fmt.Sprintf("%q is not a valid api. See `aliyun help %s`.", e.Name, product)
+	return fmt.Sprintf(cli.CommandText("%q is not a valid api. See `aliyun help %s`."), e.Name, product)
 }
 
 func (e *InvalidApiError) AgentMessage() string {
@@ -132,7 +132,7 @@ type InvalidParameterError struct {
 }
 
 func (e *InvalidParameterError) Error() string {
-	return fmt.Sprintf("%q is not a valid parameter or flag. See `aliyun help %s %s`.",
+	return fmt.Sprintf(cli.CommandText("%q is not a valid parameter or flag. See `aliyun help %s %s`."),
 		"--"+e.Name, strings.ToLower(e.ProductCode), e.ApiName)
 }
 
@@ -211,7 +211,7 @@ type InvalidProductOrPluginError struct {
 }
 
 func (e *InvalidProductOrPluginError) Error() string {
-	msg := fmt.Sprintf("%q is not a valid product. See `aliyun help`.", e.Code)
+	msg := fmt.Sprintf(cli.CommandText("%q is not a valid product. See `aliyun help`."), e.Code)
 	if e.Hint != "" {
 		msg += "\n" + e.Hint
 	}
@@ -248,7 +248,7 @@ func (e *InvalidUnifiedApiError) Error() string {
 	if command := apiRecoveryCommand(e.Name, product, candidates); command != "" {
 		return fmt.Sprintf("%q is not a valid api. Search matching APIs with `%s`.", e.Name, command)
 	}
-	return fmt.Sprintf("%q is not a valid api. See `aliyun help %s`.", e.Name, product)
+	return fmt.Sprintf(cli.CommandText("%q is not a valid api. See `aliyun help %s`."), e.Name, product)
 }
 
 func (e *InvalidUnifiedApiError) AgentMessage() string {
@@ -436,16 +436,16 @@ func apiRecoveryCommand(input, product string, candidates []string) string {
 // the full product help when a prefix matches many APIs.
 func apiSearchHelpCommand(input, product string) string {
 	if safeCommandToken(input) {
-		return fmt.Sprintf("aliyun %s --help-search %s", product, input)
+		return fmt.Sprintf(cli.CommandText("aliyun %s --help-search %s"), product, input)
 	}
-	return fmt.Sprintf("aliyun help %s", product)
+	return fmt.Sprintf(cli.CommandText("aliyun help %s"), product)
 }
 
 // baselineSearchHelpCommand builds the kebab-style search hint. Products that
 // also have legacy PascalCase help render it by default, so baseline kebab
 // help must be requested through the env var prefix.
 func baselineSearchHelpCommand(input, product string) string {
-	prefix := baselineProductHelpEnv + "=true aliyun " + strings.ToLower(product)
+	prefix := baselineProductHelpEnv + cli.CommandText("=true aliyun ") + strings.ToLower(product)
 	if safeCommandToken(input) {
 		return prefix + " --help-search " + input
 	}

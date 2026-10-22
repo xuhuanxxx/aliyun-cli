@@ -408,7 +408,7 @@ func (s *machineHelpService) buildRoot(root *cli.Command) (*machineHelpRootDocum
 		}
 		commands = append(commands, machineHelpCommandSummary{
 			Group:       "core",
-			Path:        []string{"aliyun", name},
+			Path:        []string{cli.CommandName, name},
 			Name:        name,
 			Description: localizedText(entry.Short),
 		})
@@ -435,7 +435,7 @@ func (s *machineHelpService) buildRoot(root *cli.Command) (*machineHelpRootDocum
 	return &machineHelpRootDocument{
 		SchemaVersion: machineHelpSchemaVersion,
 		Kind:          "root",
-		Target:        machineHelpTarget{Path: []string{"aliyun"}, RequestedStyle: "root"},
+		Target:        machineHelpTarget{Path: []string{cli.CommandName}, RequestedStyle: "root"},
 		Commands:      commands,
 		Products:      products,
 	}, nil
@@ -513,7 +513,7 @@ func (s *machineHelpService) buildProductForStyle(code, requestedVersion, style 
 	return &machineHelpProductDocument{
 		SchemaVersion:  machineHelpSchemaVersion,
 		Kind:           "product",
-		Target:         machineHelpTarget{Path: []string{"aliyun", code}, RequestedStyle: style},
+		Target:         machineHelpTarget{Path: []string{cli.CommandName, code}, RequestedStyle: style},
 		Product:        productDoc,
 		Endpoints:      productHelpEndpoints(*product, index),
 		useVPCEndpoint: len(endpointType) > 0 && endpointType[0] == "vpc",
@@ -543,7 +543,7 @@ func (s *machineHelpService) buildAPI(code, command, requestedVersion string) (*
 		Kind:          "api",
 		Section:       helpSectionRequest,
 		Target: machineHelpTarget{
-			Path:           []string{"aliyun", productDoc.Code, command},
+			Path:           []string{cli.CommandName, productDoc.Code, command},
 			RequestedStyle: resolved.Style,
 		},
 		Product:            productDoc,
@@ -594,7 +594,7 @@ func (s *machineHelpService) buildAPIResponse(code, command, requestedVersion st
 		Kind:          "api",
 		Section:       helpSectionResponse,
 		Target: machineHelpTarget{
-			Path:           []string{"aliyun", productDoc.Code, command},
+			Path:           []string{cli.CommandName, productDoc.Code, command},
 			RequestedStyle: resolved.Style,
 		},
 		// Localized single-language schema keeps Help output lean; the
@@ -815,7 +815,7 @@ func (s *machineHelpService) resolveAPI(code, command, requestedVersion string) 
 		return nil, newMachineHelpError(
 			"UNKNOWN_API",
 			fmt.Sprintf("unknown API command %q for product %q version %q", command, product.Code, selected),
-			[]string{"aliyun", strings.ToLower(product.Code), command},
+			[]string{cli.CommandName, strings.ToLower(product.Code), command},
 			[]string{"inspect product help to list available APIs"},
 		)
 	}
@@ -1007,7 +1007,7 @@ func (s *machineHelpService) findProduct(code string) (*canonicalmeta.ProductEnt
 	return nil, newMachineHelpError(
 		"UNKNOWN_PRODUCT",
 		fmt.Sprintf("unknown product %q", code),
-		[]string{"aliyun", strings.ToLower(code)},
+		[]string{cli.CommandName, strings.ToLower(code)},
 		[]string{"inspect root help to list available products"},
 	)
 }
@@ -1022,7 +1022,7 @@ func selectProductVersion(product canonicalmeta.ProductEntry, versions []string,
 		return "", newMachineHelpError(
 			"UNKNOWN_VERSION",
 			fmt.Sprintf("product %q does not expose version %q", product.Code, requested),
-			[]string{"aliyun", strings.ToLower(product.Code)},
+			[]string{cli.CommandName, strings.ToLower(product.Code)},
 			[]string{"inspect supportedVersions in product help"},
 		)
 	}
@@ -1035,7 +1035,7 @@ func selectProductVersion(product canonicalmeta.ProductEntry, versions []string,
 		return "", newMachineHelpError(
 			"UNKNOWN_VERSION",
 			fmt.Sprintf("product %q has no API version", product.Code),
-			[]string{"aliyun", strings.ToLower(product.Code)},
+			[]string{cli.CommandName, strings.ToLower(product.Code)},
 			nil,
 		)
 	}
@@ -1061,7 +1061,7 @@ func localizedText(values map[string]string) machineHelpLocalizedText {
 }
 
 func (c *Commando) printMachineHelp(ctx *cli.Context, args []string, format string, opts helpOptions) error {
-	target := append([]string{"aliyun"}, args...)
+	target := append([]string{cli.CommandName}, args...)
 	if format != "json" {
 		return newMachineHelpError(
 			"INVALID_FORMAT",

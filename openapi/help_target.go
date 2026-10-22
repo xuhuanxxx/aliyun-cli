@@ -238,7 +238,7 @@ func BuildHelpCommand(target HelpTarget) (string, error) {
 		return "", err
 	}
 
-	args := []string{"aliyun"}
+	args := []string{cli.CommandName}
 	if target.SectionExplicit {
 		args = append(args, "help", target.Product, target.Action)
 	} else {

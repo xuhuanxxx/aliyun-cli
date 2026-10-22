@@ -159,17 +159,17 @@ func (e *InvalidFlagError) AgentMessage() string {
 // --help-search/--cli-section options.
 func (e *InvalidFlagError) AgentHelpCommand() string {
 	if e == nil || e.ctx == nil || e.ctx.command == nil {
-		return "aliyun help"
+		return CommandName + " help"
 	}
 	path := strings.TrimSpace(e.ctx.command.getName())
-	if path == "aliyun" {
-		return "aliyun help"
+	if path == CommandName {
+		return CommandName + " help"
 	}
-	path = strings.TrimSpace(strings.TrimPrefix(path, "aliyun "))
+	path = strings.TrimSpace(strings.TrimPrefix(path, CommandName+" "))
 	if path == "" {
-		return "aliyun help"
+		return CommandName + " help"
 	}
-	return "aliyun help " + path
+	return CommandName + " help " + path
 }
 
 func (*InvalidFlagError) AIRecoveryEligible() {}

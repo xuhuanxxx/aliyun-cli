@@ -1,11 +1,11 @@
-name: Personal CLI packages
+name: AliyunX packages
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Personal build version (X.Y.Z-personal.N)'
+        description: 'Personal build version (X.Y.Z-x.N)'
         required: true
-        default: '3.5.1-personal.1'
+        default: '3.5.1-x.1'
   push:
     branches: ['build/personal-packages']
 permissions:
@@ -35,10 +35,10 @@ jobs:
         shell: bash
         run: |
           test_home=$(mktemp -d)
-          GOPATH="$(go env GOPATH)" GOCACHE="$(go env GOCACHE)" HOME="$test_home" go test -race ./config ./cli ./main
+          GOPATH="$(go env GOPATH)" GOCACHE="$(go env GOCACHE)" HOME="$test_home" go test -race ./config ./cli ./main ./openapi
       - name: Package
         env:
-          VERSION: ${{ inputs.version || '3.5.1-personal.1' }}
+          VERSION: ${{ inputs.version || '3.5.1-x.1' }}
           GOOS: ${{ matrix.os }}
           GOARCH: ${{ matrix.arch }}
         run: bash tools/package_personal.sh "$VERSION" dist/personal
@@ -50,8 +50,11 @@ jobs:
           mkdir smoke
           tar -xzf ./*.tar.gz -C smoke
           test_home=$(mktemp -d)
-          HOME="$test_home" ./smoke/aliyun version
-          HOME="$test_home" ./smoke/aliyun help > /dev/null
+          HOME="$test_home" ./smoke/aliyunx version
+          HOME="$test_home" ./smoke/aliyunx help --cli-output json > smoke/help.json
+          python3 -c 'import json; d=json.load(open("smoke/help.json")); assert "aliyunx" in str(d); assert "\"aliyun\"" not in json.dumps(d)'
+          if HOME="$test_home" ./smoke/aliyunx upgrade > smoke/upgrade.txt 2>&1; then exit 1; fi
+          grep "brew upgrade aliyunx" smoke/upgrade.txt
       - uses: actions/upload-artifact@v4
         with:
           name: personal-cli-${{ matrix.os }}-${{ matrix.arch }}-${{ github.sha }}

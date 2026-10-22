@@ -60,7 +60,7 @@ func buildUtilityHelpDocument(root *cli.Command, path []string) (*machineHelpUti
 			return nil, fmt.Errorf("%q is not a valid utility command", path[1])
 		}
 	}
-	targetPath := append([]string{"aliyun"}, path...)
+	targetPath := append([]string{cli.CommandName}, path...)
 	usage := command.Usage
 	if len(path) == 2 && usage != "" && !strings.HasPrefix(usage, "utils ") {
 		usage = "utils " + usage
@@ -147,7 +147,7 @@ func renderUtilityHelpText(ctx *cli.Context, document *machineHelpUtilityDocumen
 		return err
 	}
 	if document.Usage != "" {
-		if _, err := fmt.Fprintf(w, "\nUsage:\n  aliyun %s\n", document.Usage); err != nil {
+		if _, err := fmt.Fprintf(w, cli.CommandText("\nUsage:\n  aliyun %s\n"), document.Usage); err != nil {
 			return err
 		}
 	}

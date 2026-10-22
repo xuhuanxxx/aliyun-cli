@@ -59,9 +59,9 @@ func NewAutoCompleteCommand() *Command {
 			//	fmt.Printf("zshInstaller: %s\n", f)
 			//}
 			if uninstallFlag.IsAssigned() {
-				uninstallCompletion(ctx, "aliyun")
+				uninstallCompletion(ctx, CommandName)
 			} else {
-				installCompletion(ctx, "aliyun")
+				installCompletion(ctx, CommandName)
 			}
 			return nil
 		},

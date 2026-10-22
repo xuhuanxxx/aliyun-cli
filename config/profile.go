@@ -177,7 +177,7 @@ func (cp *Profile) Validate() error {
 	}
 
 	if cp.Mode == "" {
-		return fmt.Errorf("profile %s is not configure yet, run `aliyun configure --profile %s` first", cp.Name, cp.Name)
+		return fmt.Errorf(cli.CommandText("profile %s is not configure yet, run `aliyun configure --profile %s` first"), cp.Name, cp.Name)
 	}
 
 	switch cp.Mode {
@@ -189,7 +189,7 @@ func (cp *Profile) Validate() error {
 			return err
 		}
 		if cp.StsToken == "" {
-			return fmt.Errorf("sts_token is not configured for profile '%s'. Run `aliyun configure --profile %s --mode StsToken` to set it",
+			return fmt.Errorf(cli.CommandText("sts_token is not configured for profile '%s'. Run `aliyun configure --profile %s --mode StsToken` to set it"),
 				cp.Name, cp.Name)
 		}
 	case RamRoleArn:
@@ -198,71 +198,71 @@ func (cp *Profile) Validate() error {
 			return err
 		}
 		if cp.RamRoleArn == "" {
-			return fmt.Errorf("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RamRoleArn` to set it",
+			return fmt.Errorf(cli.CommandText("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RamRoleArn` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.RoleSessionName == "" {
-			return fmt.Errorf("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RamRoleArn` to set it",
+			return fmt.Errorf(cli.CommandText("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RamRoleArn` to set it"),
 				cp.Name, cp.Name)
 		}
 	case EcsRamRole, RamRoleArnWithEcs:
 	case RsaKeyPair:
 		if cp.PrivateKey == "" {
-			return fmt.Errorf("private_key is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RsaKeyPair` to set it",
+			return fmt.Errorf(cli.CommandText("private_key is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RsaKeyPair` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.KeyPairName == "" {
-			return fmt.Errorf("key_pair_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RsaKeyPair` to set it",
+			return fmt.Errorf(cli.CommandText("key_pair_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode RsaKeyPair` to set it"),
 				cp.Name, cp.Name)
 		}
 	case External:
 		if cp.ProcessCommand == "" {
-			return fmt.Errorf("process_command is not configured for profile '%s'. Run `aliyun configure --profile %s --mode External` to set it",
+			return fmt.Errorf(cli.CommandText("process_command is not configured for profile '%s'. Run `aliyun configure --profile %s --mode External` to set it"),
 				cp.Name, cp.Name)
 		}
 	case CredentialsURI:
 		if cp.CredentialsURI == "" {
-			return fmt.Errorf("credentials_uri is not configured for profile '%s'. Run `aliyun configure --profile %s --mode CredentialsURI` or set ALIBABA_CLOUD_CREDENTIALS_URI environment variable",
+			return fmt.Errorf(cli.CommandText("credentials_uri is not configured for profile '%s'. Run `aliyun configure --profile %s --mode CredentialsURI` or set ALIBABA_CLOUD_CREDENTIALS_URI environment variable"),
 				cp.Name, cp.Name)
 		}
 	case OIDC:
 		if cp.OIDCProviderARN == "" {
-			return fmt.Errorf("oidc_provider_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it",
+			return fmt.Errorf(cli.CommandText("oidc_provider_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.OIDCTokenFile == "" {
-			return fmt.Errorf("oidc_token_file is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it",
+			return fmt.Errorf(cli.CommandText("oidc_token_file is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.RamRoleArn == "" {
-			return fmt.Errorf("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it",
+			return fmt.Errorf(cli.CommandText("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.RoleSessionName == "" {
-			return fmt.Errorf("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it",
+			return fmt.Errorf(cli.CommandText("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode OIDC` to set it"),
 				cp.Name, cp.Name)
 		}
 	case ChainableRamRoleArn:
 		if cp.SourceProfile == "" {
-			return fmt.Errorf("source_profile is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it",
+			return fmt.Errorf(cli.CommandText("source_profile is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.RamRoleArn == "" {
-			return fmt.Errorf("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it",
+			return fmt.Errorf(cli.CommandText("ram_role_arn is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it"),
 				cp.Name, cp.Name)
 		}
 		if cp.RoleSessionName == "" {
-			return fmt.Errorf("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it",
+			return fmt.Errorf(cli.CommandText("role_session_name is not configured for profile '%s'. Run `aliyun configure --profile %s --mode ChainableRamRoleArn` to set it"),
 				cp.Name, cp.Name)
 		}
 	case CloudSSO:
 		if cp.CloudSSOSignInUrl == "" {
-			return fmt.Errorf("cloud_sso_sign_in_url is not configured for profile '%s'. Run `aliyun configure --profile %s --mode CloudSSO` to set it",
+			return fmt.Errorf(cli.CommandText("cloud_sso_sign_in_url is not configured for profile '%s'. Run `aliyun configure --profile %s --mode CloudSSO` to set it"),
 				cp.Name, cp.Name)
 		}
 	case OAuth:
 		if cp.OAuthSiteType != "CN" && cp.OAuthSiteType != "INTL" {
-			return fmt.Errorf("invalid oauth_site_type '%s' for profile '%s', should be CN or INTL. Run `aliyun configure --profile %s --mode OAuth` to set it",
+			return fmt.Errorf(cli.CommandText("invalid oauth_site_type '%s' for profile '%s', should be CN or INTL. Run `aliyun configure --profile %s --mode OAuth` to set it"),
 				cp.OAuthSiteType, cp.Name, cp.Name)
 		}
 	case BearerToken:
@@ -270,7 +270,7 @@ func (cp *Profile) Validate() error {
 			return err
 		}
 		if cp.BearerTokenValue == "" {
-			return fmt.Errorf("bearer_token is not configured for profile '%s'. Run `aliyun configure --profile %s --mode BearerToken` to set it",
+			return fmt.Errorf(cli.CommandText("bearer_token is not configured for profile '%s'. Run `aliyun configure --profile %s --mode BearerToken` to set it"),
 				cp.Name, cp.Name)
 		}
 	case Anonymous:
@@ -427,11 +427,11 @@ func AutoModeRecognition(cp *Profile) {
 
 func (cp *Profile) ValidateAK() error {
 	if len(cp.AccessKeyId) == 0 {
-		return fmt.Errorf("access_key_id is not configured for profile '%s'. Run `aliyun configure --profile %s --mode %s` to set it",
+		return fmt.Errorf(cli.CommandText("access_key_id is not configured for profile '%s'. Run `aliyun configure --profile %s --mode %s` to set it"),
 			cp.Name, cp.Name, cp.Mode)
 	}
 	if len(cp.AccessKeySecret) == 0 {
-		return fmt.Errorf("access_key_secret is not configured for profile '%s'. Run `aliyun configure --profile %s --mode %s` to set it",
+		return fmt.Errorf(cli.CommandText("access_key_secret is not configured for profile '%s'. Run `aliyun configure --profile %s --mode %s` to set it"),
 			cp.Name, cp.Name, cp.Mode)
 	}
 	return nil
@@ -480,12 +480,12 @@ func (cp *Profile) GetCredential(ctx *cli.Context, proxyHost *string) (cred cred
 	switch cp.Mode {
 	case AK:
 		if cp.AccessKeyId == "" || cp.AccessKeySecret == "" {
-			err = fmt.Errorf("AccessKeyId/AccessKeySecret is empty! run `aliyun configure` first")
+			err = fmt.Errorf("%s", cli.CommandText("AccessKeyId/AccessKeySecret is empty! run `aliyun configure` first"))
 			return
 		}
 
 		if cp.RegionId == "" {
-			err = fmt.Errorf("default RegionId is empty! run `aliyun configure` first")
+			err = fmt.Errorf("%s", cli.CommandText("default RegionId is empty! run `aliyun configure` first"))
 			return
 		}
 
@@ -692,7 +692,7 @@ func (cp *Profile) GetCredential(ctx *cli.Context, proxyHost *string) (cred cred
 		httpClient := util.NewHttpClient()
 		// check access token expiration
 		if cp.CloudSSOSignInUrl == "" || cp.CloudSSOAccountId == "" || cp.CloudSSOAccessConfig == "" {
-			reLoginCommand := fmt.Sprintf("aliyun configure --profile %s --mode CloudSSO", cp.Name)
+			reLoginCommand := fmt.Sprintf(cli.CommandText("aliyun configure --profile %s --mode CloudSSO"), cp.Name)
 			return nil, fmt.Errorf(i18n.T(
 				"CloudSSO sign in url or account id or access config is empty, please configure with command: %s",
 				"CloudSSO登录链接或账号ID或访问配置无效，请通过命令：%s 重新完成配置").GetMessage(), reLoginCommand)
@@ -700,7 +700,7 @@ func (cp *Profile) GetCredential(ctx *cli.Context, proxyHost *string) (cred cred
 		if cp.CloudSSOAccessTokenExpire == 0 || cp.CloudSSOAccessTokenExpire <= currentUnixTime {
 			// not support refresh access token yet, need to re-login
 			var reLoginCommand string
-			reLoginCommand = fmt.Sprintf("aliyun configure --profile %s", cp.Name)
+			reLoginCommand = fmt.Sprintf(cli.CommandText("aliyun configure --profile %s"), cp.Name)
 			return nil, fmt.Errorf(i18n.T(
 				"CloudSSO access token is expired, please re-login with command: %s",
 				"CloudSSO访问令牌已过期，请通过命令：%s 重新登录").GetMessage(), reLoginCommand)
@@ -876,11 +876,11 @@ func ErrBearerTokenRequiresPlugin(productCode string) error {
 	code := strings.ToLower(strings.TrimSpace(productCode))
 	if code != "" {
 		return fmt.Errorf(
-			"profile uses BearerToken mode: built-in product %q is not supported; use the product plugin instead, e.g. `aliyun %s <cmd-name> ...` (install with `aliyun plugin install --name %s` if needed)",
+			cli.CommandText("profile uses BearerToken mode: built-in product %q is not supported; use the product plugin instead, e.g. `aliyun %s <cmd-name> ...` (install with `aliyun plugin install --name %s` if needed)"),
 			code, code, code)
 	}
-	return fmt.Errorf(
-		"profile uses BearerToken mode: built-in OpenAPI metadata (legacy SDK) does not support this authentication; use the corresponding product plugin, e.g. `aliyun devops <cmd-name> ...`")
+	return fmt.Errorf("%s",
+		cli.CommandText("profile uses BearerToken mode: built-in OpenAPI metadata (legacy SDK) does not support this authentication; use the corresponding product plugin, e.g. `aliyun devops <cmd-name> ...`"))
 }
 
 func NormalizeBearerTokenHeaderKey(key string) (string, error) {

@@ -130,7 +130,7 @@ func NewConfigureCommand() *cli.Command {
 			"configure credential, AI Mode and settings",
 			"配置身份认证、AI 模式和其他信息"),
 		Usage:  "configure --mode {AK|RamRoleArn|EcsRamRole|OIDC|External|CredentialsURI|ChainableRamRoleArn|CloudSSO|OAuth|BearerToken} --profile <profileName> [--config-path <configPath>]",
-		Sample: "aliyun configure --mode OAuth  (Recommended)",
+		Sample: cli.CommandText("aliyun configure --mode OAuth  (Recommended)"),
 		Run: func(ctx *cli.Context, args []string) error {
 			if len(args) > 0 {
 				return cli.NewInvalidCommandError(args[0], ctx)
@@ -544,7 +544,7 @@ func newOAuthTokenError(stage string, statusCode int, body []byte, cp *Profile) 
 // 构建 Oauth 应用重新登录的命令
 func buildReLoginOauthCommand(cp *Profile) string {
 	var sb strings.Builder
-	sb.WriteString("aliyun configure --mode OAuth")
+	sb.WriteString(cli.CommandText("aliyun configure --mode OAuth"))
 	if cp.OAuthSiteType != "" {
 		sb.WriteString(" --oauth-site-type ")
 		sb.WriteString(cp.OAuthSiteType)

@@ -23,7 +23,9 @@ import (
 // This variable is replaced in compile time
 // `-ldflags "-X 'github.com/aliyun/aliyun-cli/v3/cli.Version=${VERSION}'"`
 var (
-	Version = "0.0.1"
+	Version      = "0.0.1"
+	CommandName  = "aliyun"
+	SourceCommit = ""
 )
 
 func GetVersion() string {
@@ -36,7 +38,11 @@ func NewVersionCommand() *Command {
 		Short:  i18n.T("print current version", "打印当前版本号"),
 		Hidden: true,
 		Run: func(ctx *Context, args []string) error {
-			Printf(ctx.Stdout(), "%s\n", Version)
+			if SourceCommit != "" {
+				Printf(ctx.Stdout(), "%s (%s)\n", Version, SourceCommit)
+			} else {
+				Printf(ctx.Stdout(), "%s\n", Version)
+			}
 			return nil
 		},
 	}

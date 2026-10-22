@@ -134,14 +134,14 @@ func applyRootHelpOptions(document *machineHelpRootDocument, options helpOptions
 				document.Matches = append(document.Matches, machineHelpRootMatch{
 					Kind: "global-flag", Name: entry.flag.Name,
 					Aliases: aliases,
-					Command: "aliyun --help-search " + strings.TrimLeft(entry.flag.Name, "-"), Description: entry.flag.Description,
+					Command: cli.CommandText("aliyun --help-search ") + strings.TrimLeft(entry.flag.Name, "-"), Description: entry.flag.Description,
 				})
 			} else {
 				document.Products = append(document.Products, entry.product)
 				document.Matches = append(document.Matches, machineHelpRootMatch{
 					Kind: "product", Name: entry.product.Code,
 					Aliases: nonEmptyMachineHelpStrings(entry.product.Name.EN, entry.product.Name.ZH),
-					Command: "aliyun " + entry.product.Code + " --help", Description: entry.product.Name,
+					Command: cli.CommandText("aliyun ") + entry.product.Code + " --help", Description: entry.product.Name,
 				})
 			}
 		}
