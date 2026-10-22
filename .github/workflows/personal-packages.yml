@@ -1,0 +1,59 @@
+name: Personal CLI packages
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Personal build version (X.Y.Z-personal.N)'
+        required: true
+        default: '3.5.1-personal.1'
+  push:
+    branches: ['build/personal-packages']
+permissions:
+  contents: read
+concurrency:
+  group: personal-packages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: macos-14, os: darwin, arch: arm64}
+          - {runner: macos-15-intel, os: darwin, arch: amd64}
+          - {runner: ubuntu-22.04, os: linux, arch: amd64}
+          - {runner: ubuntu-22.04-arm, os: linux, arch: arm64}
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Test OAuth and command integration without user credentials
+        shell: bash
+        run: |
+          test_home=$(mktemp -d)
+          GOPATH="$(go env GOPATH)" GOCACHE="$(go env GOCACHE)" HOME="$test_home" go test -race ./config ./cli ./main
+      - name: Package
+        env:
+          VERSION: ${{ inputs.version || '3.5.1-personal.1' }}
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+        run: bash tools/package_personal.sh "$VERSION" dist/personal
+      - name: Verify extracted package
+        shell: bash
+        run: |
+          cd dist/personal
+          shasum -a 256 -c ./*.sha256
+          mkdir smoke
+          tar -xzf ./*.tar.gz -C smoke
+          test_home=$(mktemp -d)
+          HOME="$test_home" ./smoke/aliyun version
+          HOME="$test_home" ./smoke/aliyun help > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: personal-cli-${{ matrix.os }}-${{ matrix.arch }}-${{ github.sha }}
+          path: dist/personal/*.tar.gz*
+          if-no-files-found: error
